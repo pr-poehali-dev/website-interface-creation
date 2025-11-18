@@ -1,13 +1,13 @@
 import { useState } from 'react';
 import { Link, useLocation } from 'react-router-dom';
-import { Button } from '@/components/ui/button';
 import Icon from '@/components/ui/icon';
+import { Button } from '@/components/ui/button';
 
 const Header = () => {
-  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const [isMenuOpen, setIsMenuOpen] = useState(false);
   const location = useLocation();
 
-  const navItems = [
+  const navLinks = [
     { path: '/', label: 'Главная' },
     { path: '/menu', label: 'Меню' },
     { path: '/about', label: 'О нас' },
@@ -17,65 +17,64 @@ const Header = () => {
   const isActive = (path: string) => location.pathname === path;
 
   return (
-    <header className="sticky top-0 z-50 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 border-b">
+    <header className="bg-card border-b border-border sticky top-0 z-50 shadow-sm">
       <div className="container mx-auto px-4">
         <div className="flex items-center justify-between h-20">
-          <Link to="/" className="flex items-center space-x-3">
+          <Link to="/" className="flex items-center gap-3">
             <div className="w-12 h-12 bg-primary rounded-full flex items-center justify-center">
-              <Icon name="Coffee" size={24} className="text-primary-foreground" />
+              <Icon name="Coffee" className="text-primary-foreground" size={24} />
             </div>
-            <span className="text-2xl font-bold text-foreground">CoffeeHome</span>
+            <span className="text-2xl font-bold text-primary">Coffeehouse</span>
           </Link>
 
-          <nav className="hidden md:flex items-center space-x-8">
-            {navItems.map((item) => (
+          <nav className="hidden md:flex items-center gap-8">
+            {navLinks.map((link) => (
               <Link
-                key={item.path}
-                to={item.path}
-                className={`text-lg font-medium transition-colors hover:text-accent ${
-                  isActive(item.path) ? 'text-accent' : 'text-foreground'
+                key={link.path}
+                to={link.path}
+                className={`text-lg font-medium transition-colors hover:text-primary ${
+                  isActive(link.path) ? 'text-primary' : 'text-foreground'
                 }`}
               >
-                {item.label}
+                {link.label}
               </Link>
             ))}
           </nav>
 
           <div className="hidden md:block">
-            <Link to="/contacts">
-              <Button size="lg" className="text-lg">
-                Забронировать столик
-              </Button>
-            </Link>
+            <Button asChild size="lg" className="font-semibold">
+              <Link to="/contacts">Забронировать</Link>
+            </Button>
           </div>
 
           <button
-            className="md:hidden"
-            onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+            onClick={() => setIsMenuOpen(!isMenuOpen)}
+            className="md:hidden p-2"
+            aria-label="Меню"
           >
-            <Icon name={mobileMenuOpen ? 'X' : 'Menu'} size={28} />
+            <Icon name={isMenuOpen ? 'X' : 'Menu'} size={28} />
           </button>
         </div>
 
-        {mobileMenuOpen && (
-          <nav className="md:hidden pb-6 space-y-4">
-            {navItems.map((item) => (
+        {isMenuOpen && (
+          <nav className="md:hidden pb-6 flex flex-col gap-4">
+            {navLinks.map((link) => (
               <Link
-                key={item.path}
-                to={item.path}
-                className={`block text-lg font-medium transition-colors hover:text-accent ${
-                  isActive(item.path) ? 'text-accent' : 'text-foreground'
+                key={link.path}
+                to={link.path}
+                onClick={() => setIsMenuOpen(false)}
+                className={`text-lg font-medium transition-colors hover:text-primary ${
+                  isActive(link.path) ? 'text-primary' : 'text-foreground'
                 }`}
-                onClick={() => setMobileMenuOpen(false)}
               >
-                {item.label}
+                {link.label}
               </Link>
             ))}
-            <Link to="/contacts">
-              <Button size="lg" className="w-full text-lg">
-                Забронировать столик
-              </Button>
-            </Link>
+            <Button asChild size="lg" className="w-full font-semibold">
+              <Link to="/contacts" onClick={() => setIsMenuOpen(false)}>
+                Забронировать
+              </Link>
+            </Button>
           </nav>
         )}
       </div>
